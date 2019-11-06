@@ -13,9 +13,9 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   pool: 5
-  username: homestead
-  password: secret
-  host: 192.168.10.10
+  username: rails
+  password: trung
+  host: 127.0.0.1
 
 development:
   <<: *default
