@@ -62,4 +62,6 @@ Rails.application.configure do
 
   # Divise
   config.action_mailer.default_url_options = { host: '127.0.0.1', port: 3000 }
+  
+  config.hosts << "b29387cb275d4a8d940058c5fa0abd03.vfs.cloud9.us-east-1.amazonaws.com"
 end

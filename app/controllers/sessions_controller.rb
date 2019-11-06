@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   def showLogin
     render :template => '/sessions/login'
   end
-  
+
   def login
     user = User.find_by_email(params[:email])
     if user && user.password_digest == params[:password]
