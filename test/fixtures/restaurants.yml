@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  average_star: 1
+  selected_count: 1
+  address: MyString
+
+two:
+  name: MyString
+  average_star: 1
+  selected_count: 1
+  address: MyString
