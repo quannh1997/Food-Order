@@ -79,6 +79,10 @@
     color: #212529;
     text-align: left;
     background-color: #fff;
+    background-image: url("background2.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;  
+    background-size: cover;
   }
   
   [tabindex="-1"]:focus {
@@ -165,6 +169,8 @@
   sub {
     bottom: -.25em;
   }
+  
+  
   
   sup {
     top: -.5em;
@@ -6244,6 +6250,7 @@
     position: relative;
     width: 100%;
     overflow: hidden;
+    height: 271px;
   }
   
   .carousel-inner::after {

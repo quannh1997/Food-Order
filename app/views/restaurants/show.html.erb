@@ -1,27 +1,66 @@
-<h1>Restaurant infomation</h1>
-<p>
-  <strong>Image:</strong>
-  <img src="<%= @restaurant.image %>">
-</p>
-<p>
-  <strong>Name:</strong>
-  <%= @restaurant.name %>
-</p>
-
-<p>
-  <strong>Average star:</strong>
-  <%= @restaurant.average_star %>
-</p>
-
-<p>
-  <strong>Selected count:</strong>
-  <%= @restaurant.selected_count %>
-</p>
-
-<p>
-  <strong>Address:</strong>
-  <%= @restaurant.address %>
-</p>
-
-<%= link_to 'Edit', edit_restaurant_path(@restaurant) %> |
-<%= link_to 'Back', restaurants_path %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.checked {
+  color: orange;
+}
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <img class="card-img-top" src="<%= @restaurant.image %>" alt="Restaurant image" style="width:450px;height:300px;">
+    </div>
+    <div class="col">
+        <h1>Restaurant infomation</h1>
+        <br>
+      <div class="row">
+        <div class="col-5">
+          
+            <h5>Name:</h5>
+        </div>
+        <div class ="col-7">
+            <%= @restaurant.name %>
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          
+            <h5>Average star:</h5>
+          </div>
+          <div class="col-7">
+            <% @restaurant.average_star.to_i.times do %>
+               <span class="fa fa-star checked"></span>
+            <% end %>
+            <% @restaurant.blank_stars.times do %>
+               <span class="fa fa-star"></span>
+            <% end %>
+          </div>
+          
+      </div>
+      <div class="row">
+        <div class="col-5">
+          
+            <h5>Selected count:</h5>
+        </div>
+        <div class="col-7">
+            <%= @restaurant.selected_count %>
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+            <h5>Address:</h5>
+        </div>
+        <div class="col-7">
+            <%= @restaurant.address %>
+          
+        </div>  
+      </div>
+      <br><br>
+      <div class="row">
+        <div class="col-5">
+          <h5><%= link_to "Menu"%></h5>
+        </div>
+      </div>
+  </div>
+</div>
