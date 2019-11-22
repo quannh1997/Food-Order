@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191120030329) do
+ActiveRecord::Schema.define(version: 20191122035228) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email"
@@ -74,21 +74,13 @@ ActiveRecord::Schema.define(version: 20191120030329) do
     t.datetime "updated_at",                   null: false
   end
 
-  create_table "restaurant_photos", force: :cascade do |t|
-    t.string   "url"
-    t.integer  "restaurant_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["restaurant_id"], name: "index_restaurant_photos_on_restaurant_id"
-  end
-
   create_table "restaurants", force: :cascade do |t|
     t.string   "name"
-    t.integer  "average_star"
-    t.integer  "selected_count"
+    t.float    "average_star",   default: 0.0
+    t.integer  "selected_count", default: 0
     t.string   "address"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.string   "image"
   end
 
@@ -109,6 +101,7 @@ ActiveRecord::Schema.define(version: 20191120030329) do
     t.datetime "updated_at",                          null: false
     t.string   "name"
     t.date     "birth"
+    t.string   "image"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["name"], name: "index_users_on_name", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

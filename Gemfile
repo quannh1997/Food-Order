@@ -12,6 +12,8 @@ gem 'rails', '~> 5.0.7', '>= 5.0.7.2'
 gem 'sqlite3', '~> 1.3.13'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
+# Use haml
+gem 'haml'
 # Use SCSS for stylesheets
 gem 'bootstrap_form', '~> 4.0'
 gem 'bootstrap', '~> 4.3.1'

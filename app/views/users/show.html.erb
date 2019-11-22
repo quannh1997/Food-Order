@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <img class="card-img-top" src="<%= @user.image %>" alt="user image" style="width:450px;height:300px;">
+    </div>
+    <div class="col">
+        <h1>user infomation</h1>
+        <br>
+      <div class="row">
+        <div class="col-5">
+          
+            <h5>Name:</h5>
+        </div>
+        <div class ="col-7">
+            <%= @user.name %>
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          
+            <h5>Day of birth:</h5>
+        </div>
+        <div class ="col-7">
+            <%= @user.birth %>
+          
+        </div>
+      </div>
+
+
+<%= link_to 'Edit', edit_user_path(@user) %> 
+
