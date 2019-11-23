@@ -16,7 +16,7 @@
         <% @restaurants.each do |restaurant| %>
         <div class="col-md-4 pb-1 pb-md-0" style="margin-bottom: 20px;">
           <div class="card">
-            <img class="card-img-top" src="<%= restaurant.image %>" alt="Card image cap">
+            <img class="card-img-top" src="<%= restaurant.image %>" alt="Card image cap" style="width: 338px; height: 225px">
             <div class="card-body">
               <h5 class="card-title"><%= restaurant.name %></h5>
               <p class="card-text">Rate : <%= restaurant.average_star %>*</p>

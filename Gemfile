@@ -8,8 +8,9 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.7', '>= 5.0.7.2'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.3.13'
+# Use sqlite3 as the database for Active Record || mysql2
+# gem 'sqlite3', '~> 1.3.13'
+gem 'mysql2', '>= 0.4.4'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Use haml
@@ -57,3 +58,8 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "rails_admin", "~> 1.2"
 gem 'carrierwave'
+
+
+gem 'bootstrap-sass'
+
+gem 'jquery-rails'

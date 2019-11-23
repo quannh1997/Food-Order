@@ -61,6 +61,11 @@ class RestaurantsController < ApplicationController
     end
   end
 
+  def showMenu
+    @restaurant = Restaurant.find(params[:id])
+    render :template => "menus/index", :locals => {:restaurant => @restaurant}
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_restaurant

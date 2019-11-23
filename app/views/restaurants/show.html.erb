@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-.checked {
-  color: orange;
-}
+  .checked {
+    color: orange;
+  }
 </style>
 <div class="container">
   <div class="row">
@@ -10,57 +10,54 @@
       <img class="card-img-top" src="<%= @restaurant.image %>" alt="Restaurant image" style="width:450px;height:300px;">
     </div>
     <div class="col">
-        <h1>Restaurant infomation</h1>
-        <br>
+      <h1>Restaurant infomation</h1>
+      <br>
       <div class="row">
         <div class="col-5">
-          
-            <h5>Name:</h5>
-        </div>
-        <div class ="col-7">
-            <%= @restaurant.name %>
-          
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-5">
-          
-            <h5>Average star:</h5>
-          </div>
-          <div class="col-7">
-            <% @restaurant.average_star.to_i.times do %>
-               <span class="fa fa-star checked"></span>
-            <% end %>
-            <% @restaurant.blank_stars.times do %>
-               <span class="fa fa-star"></span>
-            <% end %>
-          </div>
-          
-      </div>
-      <div class="row">
-        <div class="col-5">
-          
-            <h5>Selected count:</h5>
+
+          <h5>Name:</h5>
         </div>
         <div class="col-7">
-            <%= @restaurant.selected_count %>
-          
+          <%= @restaurant.name %>
         </div>
       </div>
       <div class="row">
         <div class="col-5">
-            <h5>Address:</h5>
+          <h5>Average star:</h5>
         </div>
         <div class="col-7">
-            <%= @restaurant.address %>
-          
-        </div>  
+          <% @restaurant.average_star.to_i.times do %>
+            <span class="fa fa-star checked"></span>
+          <% end %>
+          <% @restaurant.blank_stars.times do %>
+            <span class="fa fa-star"></span>
+          <% end %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          <h5>Selected count:</h5>
+        </div>
+        <div class="col-7">
+          <%= @restaurant.selected_count %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-5">
+          <h5>Address:</h5>
+        </div>
+        <div class="col-7">
+          <%= @restaurant.address %>
+        </div>
       </div>
       <br><br>
       <div class="row">
         <div class="col-5">
-          <h5><%= link_to "Menu"%></h5>
+          <h5>
+            <a href="/restaurants/<%= @restaurant.id %>/menu">Show menu</a>
+          </h5>
         </div>
       </div>
+    </div>
   </div>
 </div>
