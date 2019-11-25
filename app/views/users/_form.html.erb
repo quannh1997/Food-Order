@@ -11,32 +11,32 @@
     </div>
   <% end %>
   
-<div class="field">
+<div class="col-5">
     <%= f.text_field :name %>
 </div>
 
-<div class="field">
+<div class="col-5">
     <%= f.date_field :birth %>
 </div>
 <script>
   function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
-
                 reader.onload = function (e) {
                     $('#blah')
                         .attr('src', e.target.result);
                 };
-
                 reader.readAsDataURL(input.files[0]);
             }
         }
 </script>
 <img class="w-25 p-3" id="blah" src="<%=@user.image%>" alt="your image" />
+<div class="col-3">
+
 
     <%= f.file_field :image, :onchange => "readURL(this)" %>
     <!--<=><input type="file" onchange="readURL(this); return false;">-->
-
+</div>
   <div class="actions">
     <%= f.submit %>
   </div>
