@@ -9,5 +9,7 @@ Rails.application.routes.draw do
 
   # Code tự viết
   get '/restaurants/:id/menu', to: 'restaurants#showMenu' , as: 'menu'
+
+  get '/theme' , to: 'restaurants#theme' , as: 'theme'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
