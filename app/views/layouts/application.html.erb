@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FoodOrder</title>
+  <title>Datta Food</title>
   <%= csrf_meta_tags %>
 
   <%= stylesheet_link_tag 'application', 'data-turbolinks-track': 'reload' %>
@@ -11,19 +11,19 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
   <!-- THEME -->
-  <link rel="stylesheet" href="/theme/css/font-awesome/css/font-awesome.min.css"/>
-  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,700,300italic' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="/theme/css/bootstrap/bootstrap.min.css"/>
-  <link rel="stylesheet" href="/theme/css/animat/animate.min.css"/>
-  <link rel="stylesheet" href="/theme/css/fancybox/jquery.fancybox.css"/>
-  <link rel="stylesheet" href="/theme/css/nivo-lightbox/nivo-lightbox.css"/>
-  <link rel="stylesheet" href="/theme/css/themes/default/default.css"/>
-  <link rel="stylesheet" href="/theme/css/owl-carousel/owl.carousel.css"/>
-  <link rel="stylesheet" href="/theme/css/owl-carousel/owl.theme.css"/>
-  <link rel="stylesheet" href="/theme/css/owl-carousel/owl.transitions.css">
+  <!--<link rel="stylesheet" href="/theme/css/font-awesome/css/font-awesome.min.css"/>-->
+  <!--<link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,700,300italic' rel='stylesheet' type='text/css'>-->
+  <!--<link rel="stylesheet" href="/theme/css/bootstrap/bootstrap.min.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/animat/animate.min.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/fancybox/jquery.fancybox.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/nivo-lightbox/nivo-lightbox.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/themes/default/default.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/owl-carousel/owl.carousel.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/owl-carousel/owl.theme.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/owl-carousel/owl.transitions.css">-->
 
-  <link rel="stylesheet" href="/theme/css/style.css"/>
-  <link rel="stylesheet" href="/theme/css/responsive.css"/>
+  <!--<link rel="stylesheet" href="/theme/css/style.css"/>-->
+  <!--<link rel="stylesheet" href="/theme/css/responsive.css"/>-->
 
 </head>
 
@@ -31,7 +31,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
   <div class="container">
     <% if user_signed_in? %>
-      <a class="navbar-brand" href="#">Hello <%= current_user.email %></a>
+      <a class="navbar-brand" href="#">Hello <%= current_user.name %></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -177,7 +177,7 @@
     </div>
     <div class="col-md-4 col-lg-5 col-6">
       <address>
-        <strong>Liquick Team, Inc.</strong><br>
+        <strong>Datta Team, Inc.</strong><br>
 
         <abbr title="Phone">P:</abbr> (123) 456-7890
       </address>
@@ -192,7 +192,7 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <p>Copyright © Liquick. All rights reserved.</p>
+        <p>Copyright © Datta. All rights reserved.</p>
       </div>
     </div>
   </div>

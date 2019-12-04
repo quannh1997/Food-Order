@@ -7,4 +7,7 @@ class StaticPagesController < ApplicationController
       # render layout: "theme/full-theme"
     end
   end
+  def show
+    render file: "#{Rails.root}/app/views/EON51/index.html.erb", layout: false
+  end
 end

@@ -12,4 +12,6 @@ Rails.application.routes.draw do
 
   get '/theme' , to: 'restaurants#theme' , as: 'theme'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  # get '/EON51/index.html'
+ get 'EON51' , to: 'static_pages#show' , as: 'EON51'
 end
