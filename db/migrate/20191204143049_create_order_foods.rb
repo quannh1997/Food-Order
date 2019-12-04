@@ -1,6 +1,6 @@
-class CreateOrderPerFoods < ActiveRecord::Migration[5.0]
+class CreateOrderFoods < ActiveRecord::Migration[5.0]
   def change
-    create_table :order_per_foods do |t|
+    create_table :order_foods do |t|
       t.references :food, foreign_key: true
       t.references :order, foreign_key: true
 
