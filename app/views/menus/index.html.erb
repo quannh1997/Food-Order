@@ -50,7 +50,7 @@
     <% restaurant.foods.each do |c| %>
       <div class="col-md-4">
         <div class="polaroid">
-          <img src="https://w3schools.com/css/img_5terre.jpg" alt="Image not found" style="width:100%">
+          <img src="<%= c.image %>" alt="Image not found" style="width:100%">
           <div class="container">
             <p><%= c.name %></p>
             <button class="btn btn-success" @click="addToOrder('<%= c.id %>','<%= c.name %>','<%= c.default_price %>')">Đặt món
