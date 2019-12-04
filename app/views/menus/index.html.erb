@@ -20,10 +20,16 @@
   a:hover {
     background-color: white !important;
   }
+
+  .bubble {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+  }
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 
-<div class="container">
+<div class="container" id="order">
   <div class="row">
     <div class="col-md-1">
       <img src="<%= restaurant.image %>" style="height: 38px;">
@@ -34,7 +40,7 @@
           Menu nhà hàng <%= restaurant.name %>
         </a>
         <% if user_signed_in? %>
-        <!--<%= fa_icon('copy', class: 'my-class', text: 'Camera', size: '3x') %>-->
+          <!--<%= fa_icon('copy', class: 'my-class', text: 'Camera', size: '3x') %>-->
           <i class="fas fa-copy" onclick="copytoClipBoard()" style="cursor: pointer"></i>
         <% end %>
       </h2>
@@ -47,16 +53,65 @@
           <img src="https://w3schools.com/css/img_5terre.jpg" alt="Image not found" style="width:100%">
           <div class="container">
             <p><%= c.name %></p>
-            <button class="btn btn-success">Chọn món</button>
+            <button class="btn btn-success" @click="addToOrder('<%= c.id %>','<%= c.name %>','<%= c.default_price %>')">Đặt món
+            </button>
           </div>
         </div>
       </div>
     <% end %>
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Các món đã đặt</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(order,key) in orders">
+              <th scope="row">{{ key+1 }}</th>
+              <td>{{order.name}}</td>
+              <td><input class="form-control" v-model="order.count" name="count" type="number"></td>
+              <td>{{order.price * order.count}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" @click="submitOrder" data-dismiss="modal">Hoàn thành</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<div class="bubble" id="cart-corner" v-if="email != ''">
+  <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <i class="fas fa-cart-arrow-down"> ({{order_amount}})</i>
+  </button>
+</div>
+
+
+
 <% if user_signed_in? %>
-    <input id="myInput" value="<%= root_url + request.fullpath  %>?id=<%= current_user.id %>&name=<%= current_user.name %>" style="opacity:0">
+  <input id="myInput" value="<%= root_url + request.fullpath %>?id=<%= current_user.id %>&name=<%= current_user.name %>" style="opacity:0">
 <% end %>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
     function copytoClipBoard() {
         <% if user_signed_in? %>
@@ -67,4 +122,67 @@
         console.log(copyText);
         <% end %>
     }
+</script>
+<script>
+    var app = new Vue({
+        el: '#order',
+        data: {
+            email: '<%= @user!= nil ? @user[:email] : ''%>',
+            food_amount: 0,
+            orders: [],
+        },
+        methods: {
+            addToOrder: function (food_id, food_name, food_price) {
+                cart.order_amount += 1;
+                if (!this.foodListId.includes(food_id)) { // nếu chưa có món đó thì thêm vào
+                    this.orders.push({
+                        id: food_id,
+                        name: food_name,
+                        count: 1,
+                        price: food_price,
+                    })
+                } else {
+                    let index = this.foodListId.indexOf(food_id);
+                    this.orders[index].count += 1;
+                }
+                // alert(food_id + '-' + food_name);
+            },
+            submitOrder : function(){
+                axios.post('/restaurants/order',{
+                    email : cart.email,
+                    restaurant_id : cart.restaurantId,
+                    order : app.orders,
+                    total: app.total,
+                }).then(function(res){
+                    alert('Order successfully');
+                    location.reload();
+                    // window.location.replace('/restaurants');
+                }).catch(function(err){
+                   console.log(err.data);
+                });
+            }
+        },
+        computed: {
+            foodListId: function () {
+                return this.orders.map(function (el) {
+                    return el.id;
+                });
+            },
+            total : function () {
+                let t = 0;
+                for (let i=0;i<this.orders.length;i++){
+                    t += parseInt(this.orders[i].count) * parseInt(this.orders[i].price)
+                }
+                return t;
+            }
+        }
+    });
+    var cart = new Vue({
+        el: '#cart-corner',
+        data: {
+            order_amount: 0,
+            email: '<%= @user!= nil ? @user[:email] : ''%>',
+            restaurantId : '<%= @restaurant!= nil ? @restaurant[:id] : ''%>',
+        },
+    })
 </script>
