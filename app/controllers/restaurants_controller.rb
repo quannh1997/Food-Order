@@ -80,21 +80,38 @@ class RestaurantsController < ApplicationController
   def order
     # status 0 : đang đặt 1 thành công rồi
     @user = User::where(["email = ?", params[:email]]).first
-    @order = Order::where(["user_id = ? and status = ?", @user[:id],0 ]).first
+    @order = Order::where(["user_id = ? and status = ?", @user[:id], 0]).first
     if (@order == nil)
-      Order.create({:user_id => @user[:id], :restaurant_id => params[:restaurant_id], :status => 0 ,total_price: params[:total]})
+      Order.create({:user_id => @user[:id], :restaurant_id => params[:restaurant_id], :status => 0, total_price: params[:total]})
     end
-    @order = Order::where(["user_id = ? and status = ?", @user[:id],0 ]).first
+    @order = Order::where(["user_id = ? and status = ?", @user[:id], 0]).first
     @requestOrders = params[:order]
     @requestOrders.each do |orderr|
-      OrderFood.create({:food_id => orderr[:id] , :order_id => @order[:id]})
+      OrderFood.create({:food_id => orderr[:id], :order_id => @order[:id]})
     end
     msg = {:status => "ok"}
     render :json => msg
+    # render json: {:status => 'll'}
   end
 
   def theme
     render :template => "theme/index", :locals => {}
+  end
+
+  # Load ra danh sách dạng json trả về cho Vue xử lý
+  def loadListRestaurants
+    # @restaurants = Restaurant.all
+    @res = Restaurant.find_by id: 1
+    render :json => {
+        :res => @res
+    }
+
+  end
+
+  # nhận thông tin order - check thời gian , trạng thái ,. ...
+  def generateLink
+    #   params[:start,:end,:list of restaurants]
+    #
   end
 
   private

@@ -1,35 +1,257 @@
+<style>
+  .bubble {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+  }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 
-    <div class="container">
-      <div class="row">
-<div class="col-4">
-      <div class="row"> </div>
-        </div>
-      </div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.css" rel="stylesheet">
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <div class="row"></div>
     </div>
-    <hr>
-    <h2 class="text-center">RECOMMENDED RESTAURANT</h2>
-    <hr>
-    <div class="container">
-      <div class="row text-center">
-        <!--each restaurant-->
-        <% @restaurants = Restaurant.all %>      
-        <% @restaurants.each do |restaurant| %>
-        <div class="col-md-4 pb-1 pb-md-0" style="margin-bottom: 20px;">
-          <div class="card">
-            <img class="card-img-top" src="<%= restaurant.image %>" alt="Card image cap" style="width: 338px; height: 225px">
-            <div class="card-body">
-              <h5 class="card-title"><%= restaurant.name %></h5>
-              <p class="card-text">Rate : <%= restaurant.average_star %>*</p>
-              <!--<a href="/EON51" class="btn btn-primary">Choose</a>-->
-              <a href="<%= restaurant_path(restaurant) %>" class="btn btn-primary">Choose</a>
+  </div>
+</div>
+<hr>
+<h2 class="text-center">RECOMMENDED RESTAURANT</h2>
+<hr>
+<div class="container" id="app">
+  <div class="row text-center">
+    <!--each restaurant-->
+    <%# @restaurants.each do |restaurant| %>
+    <div class="col-md-4 pb-1 pb-md-0" style="margin-bottom: 20px;" v-for="(item,index) in rest">
+      <div class="card">
+        <img class="card-img-top" :src="item.image.url" alt="Card image cap" style="width: 338px; height: 225px">
+        <div class="card-body">
+          <h5 class="card-title">{{item.name}}</h5>
+          <p class="card-text">Rate : {{item.average_star}} *</p>
+          <!--<a href="/EON51" class="btn btn-primary">Choose</a>-->
+          <div class="row">
+            <div class="offset-md-3 col-md-2">
+              <a :href="'/restaurants/' + item.id" class="btn btn-primary" target="_blank" style="color: #f8f9fa">Details</a>
+            </div>
+            <div class="col-md-6">
+              <button class="btn btn-success" @click="addToCart(index)" v-if="!choosingRestaurantIds.includes(index)">Chọn</button>
+              <button class="btn btn-warning" @click="deleteFromCart(index)" v-if="choosingRestaurantIds.includes(index)">Bỏ
+                chọn
+              </button>
             </div>
           </div>
         </div>
-        <% end %>
-        <!--each restaurant-->
-
-        
-        
       </div>
     </div>
-    <hr>
+    <%# end %>
+    <!--each restaurant-->
+
+    <div class="bubble" id="cart-corner">
+      <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        <i class="fas fa-cart-arrow-down"></i> ({{this.amount}})
+      </button>
+    </div>
+  </div>
+  <!-- Modal show restaurant-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Choosing restaurants </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Thời gian bắt đầu</label>
+                <div class="input-group clockpicker">
+                  <input type="text" class="form-control" value="09:30" id="start">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="">Thời gian kết thúc</label>
+                <div class="input-group clockpicker">
+                  <input type="text" class="form-control" value="09:30" id="end">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Show menu</th>
+              <th scope="col">Manipulation</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(restId,index) in choosingRestaurantIds">
+              <th scope="row">{{index+1}}</th>
+              <td>{{rest[restId].name}}</td>
+              <td>
+                <button class="btn btn-outline-info" @click="showMenu(restId)"><i class="fas fa-eye"></i></button>
+              </td>
+              <td>
+                <button class="btn btn-danger" @click="deleteFromCart(restId)"><i class="fas fa-ban"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <button class="btn btn-outline-success" @click="submitOrder">Gửi đi</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!--          <button type="button" class="btn btn-primary">Submit</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal showing menu-->
+  <!-- Modal -->
+  <div class="modal fade" id="menu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Các món ăn có trong nhà hàng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Cost</th>
+              <th scope="col">Star</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(food,index) in menu.foods">
+              <th scope="row">{{index+1}}</th>
+              <td>{{food.name}}</td>
+              <td>{{food.default_price}}</td>
+              <td>{{food.average_star}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.clockpicker').clockpicker();
+    });
+</script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            start: '',
+            end: '',
+            rest: [],
+            choosingRestaurantIds: [],
+            menu : [],
+        },
+        methods: {
+            getListRetaurants: function () {
+                axios.get('/load-list-restaurants', {}).then(function (res) {
+                    let rest = res.data.list;
+                    app.rest = rest;
+                }).catch(function (err) {
+                    console.log(err.data);
+                })
+            },
+            addToCart: function (index) {
+                if (!this.choosingRestaurantIds.includes(index)) {
+                    this.choosingRestaurantIds.push(index);
+                }
+            },
+            deleteFromCart: function (index) {
+                this.choosingRestaurantIds = this.choosingRestaurantIds.filter(value => value != index);
+            },
+            showMenu: function (index) {
+                let restId = this.rest[index].id;
+                axios.get('/show-menu/' + restId, {}).then(function (res) {
+                    app.menu = res.data;
+                    $('#menu').modal('show');
+                }).catch(function (err) {
+                    console.log(err.data);
+                })
+            },
+            submitOrder: function () {
+                let params = {
+                    start: $('#start').val(),
+                    end: $('#end').val(),
+                    ids: this.choosingId,
+                }
+                // check Time
+                let start = params.start;
+                let end = params.end;
+                let mark = true;
+                if (start.substring(0, 2) > "23" || start.substring(0, 2) < "00" || end.substring(0, 2) > "23" || end.substring(0, 2) < "00") {
+                    mark = false;
+                }
+                if (start.substring(2, 3) != ":" || start.substring(2, 3) != ":" || end.substring(2, 3) != ":" || end.substring(2, 3) != ":") {
+                    mark = false;
+                }
+                if (start.substring(3, 5) > "59" || start.substring(3, 5) < "00" || end.substring(3, 5) > "59" || end.substring(3, 5) < "00") {
+                    mark = false;
+                }
+                if (!mark) {
+                    alert('Ngày tháng không đúng định dạng');
+                } else {
+                    axios.post('/restaurants/generate-link', params).then(function (res) {
+                        console.log(err.data);
+                    }).catch(function (err) {
+                        console.log(err.data);
+                    })
+                }
+            }
+        },
+        computed: {
+            amount: function () {
+                return this.choosingRestaurantIds.length;
+            },
+            choosingId: function () {
+                let arr = [];
+                for (let i = 0; i < this.choosingRestaurantIds.length; i++) {
+                    arr.push(this.rest[this.choosingRestaurantIds[i]].id)
+                }
+                return arr;
+            }
+        },
+        mounted: function () {
+            this.getListRetaurants();
+        }
+    });
+    // var cart = new Vue({
+    //     el: '#cart-corner',
+    //     data: {
+    //         amount: 0,
+    //     }
+    // });
+</script>

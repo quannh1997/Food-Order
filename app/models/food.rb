@@ -1,4 +1,5 @@
 class Food < ApplicationRecord
+    # attr_accessible :id,:name,:type,:default_price,:restaurant_id,:status,:average_star,:description
     belongs_to :restaurant
     has_many :daily_foods
     # has_many :food_images
@@ -13,9 +14,6 @@ class Food < ApplicationRecord
   
     class << self
       private
-  
-      def inheritance_column
-        nil
-      end
+
     end
 end
