@@ -13,6 +13,9 @@ class Restaurant < ApplicationRecord
   
     class << self
       private
-
+  
+      def inheritance_column
+        nil
+      end
     end
 end

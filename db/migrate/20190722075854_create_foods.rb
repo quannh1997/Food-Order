@@ -2,7 +2,7 @@ class CreateFoods < ActiveRecord::Migration[5.0]
   def change
     create_table :foods do |t|
       t.string :name
-      t.string :type
+      t.string :kind
       t.integer :default_price, :default => 0
       t.integer :restaurant_id
       t.boolean :status, :default => 1

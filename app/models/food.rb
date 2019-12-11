@@ -9,8 +9,8 @@ class Food < ApplicationRecord
     mount_uploader :image, ImageUploader
   
     validates :name, presence: true
-    validates :type, presence: true
-    validates :description, presence: true
+    # validates :type, presence: true
+    # validates :description, presence: true
   
     class << self
       private
