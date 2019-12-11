@@ -17,7 +17,11 @@ Rails.application.routes.draw do
   get '/load-list-restaurants', to: 'api#loadListRestaurants'
   post '/restaurants/generate-link', to: 'api#generateLink'
   get '/show-menu/:id', to: 'api#loadMenuFromRestId'
-  get '/order', to: 'api#getOrderWithCode'
+
+  get '/order/link/:code', to: 'api#showOrder'
+  get '/order/api/:code', to: 'api#getOrderWithCode'
+  post '/order/api/foods/:code', to: 'api#getFoodsWithCode'
+  post '/order/:code/foods/store' , to:'api#storeFoodsOrder'
 
   get '/theme', to: 'restaurants#theme', as: 'theme'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

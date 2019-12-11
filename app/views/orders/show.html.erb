@@ -16,27 +16,23 @@
   </div>
 </div>
 <hr>
-<h2 class="text-center">RECOMMENDED RESTAURANT</h2>
+<h2 class="text-center">LIST OF FOODs</h2>
 <hr>
 <div class="container" id="app">
   <div class="row text-center">
     <!--each restaurant-->
     <%# @restaurants.each do |restaurant| %>
-    <div class="col-md-4 pb-1 pb-md-0" style="margin-bottom: 20px;" v-for="(item,index) in rest">
+    <div class="col-md-4 pb-1 pb-md-0" style="margin-bottom: 20px;" v-for="(item,index) in foods">
       <div class="card">
-        <img class="card-img-top" :src="item.image.url" alt="Card image cap" style="width: 338px; height: 225px">
+        <img class="card-img-top" :src="item.image.url == null ? item.net_image : item.image.url " alt="Card image cap" style="width: 338px; height: 225px">
         <div class="card-body">
-          <h5 class="card-title">{{item.name}}</h5>
+          <h5 class="card-title">{{item.name}} <span>₫{{item.default_price}}</span></h5>
           <p class="card-text">Rate : {{item.average_star}} *</p>
           <!--<a href="/EON51" class="btn btn-primary">Choose</a>-->
           <div class="row">
-            <div class="offset-md-3 col-md-2">
-              <a :href="'/restaurants/' + item.id" class="btn btn-primary" target="_blank" style="color: #f8f9fa">Details</a>
-            </div>
-            <div class="col-md-6">
-              <button class="btn btn-success" @click="addToCart(index)" v-if="!choosingRestaurantIds.includes(index)">Chọn</button>
-              <button class="btn btn-warning" @click="deleteFromCart(index)" v-if="choosingRestaurantIds.includes(index)">Bỏ
-                chọn
+            <div class="offset-md-4 col-md-2">
+              <button class="btn btn-success" @click="addToCart(index)" v-if="!selectingFoods.includes(index)">Select</button>
+              <button class="btn btn-warning" @click="deleteFromCart(index)" v-if="selectingFoods.includes(index)">Undo
               </button>
             </div>
           </div>
@@ -48,7 +44,7 @@
 
     <div class="bubble" id="cart-corner">
       <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-        <i class="fas fa-cart-arrow-down"></i> ({{this.amount}})
+        <i class="fas fa-cart-arrow-down"></i> ({{this.count}})
       </button>
     </div>
   </div>
@@ -68,7 +64,7 @@
               <div class="form-group">
                 <label for="">Thời gian bắt đầu</label>
                 <div class="input-group clockpicker">
-                  <input type="text" class="form-control" value="09:30" id="start">
+                  <input type="text" class="form-control" v-model="order.start" id="start" disabled>
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-time"></span>
                   </div>
@@ -79,7 +75,7 @@
               <div class="form-group">
                 <label for="">Thời gian kết thúc</label>
                 <div class="input-group clockpicker">
-                  <input type="text" class="form-control" value="09:30" id="end">
+                  <input type="text" class="form-control" v-model="order.end" id="end" disabled>
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-time"></span>
                   </div>
@@ -92,25 +88,32 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Name</th>
-              <th scope="col">Show menu</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Money</th>
               <th scope="col">Manipulation</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(restId,index) in choosingRestaurantIds">
-              <th scope="row">{{index+1}}</th>
-              <td>{{rest[restId].name}}</td>
-              <td>
-                <button class="btn btn-outline-info" @click="showMenu(restId)"><i class="fas fa-eye"></i></button>
-              </td>
-              <td>
-                <button class="btn btn-danger" @click="deleteFromCart(restId)"><i class="fas fa-ban"></i></button>
-              </td>
-            </tr>
+            <template v-if="selectingFoodIds.length >0">
+
+
+              <tr v-for="(foodId,index) in selectingFoodIds">
+                <th scope="row">{{index+1}}</th>
+                <td>{{foods[index].name}}</td>
+                <td>
+                  <input v-model="amount[index]" class="form-control" type="number">
+                </td>
+                <td>
+                  {{foods[index].default_price * amount[index]}}
+                </td>
+                <td>
+                  <button class="btn btn-danger" @click="deleteFromCart(index)"><i class="fas fa-ban"></i></button>
+                </td>
+              </tr>
+            </template>
             </tbody>
           </table>
-          <button class="btn btn-outline-success" @click="submitOrder" v-if="submitted == 0">Submit</button>
-          <h2 v-if="submitted != 0" style="background-color: white;"><a v-bind:href="link" style="color: red">Link of order</a></h2>
+          <button class="btn btn-outline-success" v-if="count>0" @click="submitFoods">Submit</button>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -141,12 +144,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(food,index) in menu.foods">
-              <th scope="row">{{index+1}}</th>
-              <td>{{food.name}}</td>
-              <td>{{food.default_price}}</td>
-              <td>{{food.average_star}}</td>
-            </tr>
+
             </tbody>
           </table>
         </div>
@@ -171,85 +169,85 @@
     var app = new Vue({
         el: '#app',
         data: {
-            start: '',
-            end: '',
-            rest: [],
+            code: '<%= code %>',
+            restaurants: '',
+            foods: [],
             choosingRestaurantIds: [],
-            menu : [],
-            submitted : 0,
-            link: ''
+            selectingFoods: [],
+            order: [],
+            amount: [],
         },
         methods: {
-            getListRetaurants: function () {
-                axios.get('/load-list-restaurants', {}).then(function (res) {
-                    let rest = res.data.list;
-                    app.rest = rest;
+            getListOfRestaurant: function () {
+                let code = this.code;
+                axios.get('/order/api/' + code, {}).then(function (res) {
+                    app.order = res.data.order;
+                    app.restaurants = res.data.restaurants;
                 }).catch(function (err) {
                     console.log(err.data);
                 })
+            },
+            getListOfFoods: function (restaurantIds) {
+                let code = this.code;
+                axios.post('/order/api/foods/' + code, {
+                    restaurantIds: restaurantIds
+                }).then(function (res) {
+                    app.foods = res.data.foods;
+                    for (let i = 0; i < app.foods.length; i++) {
+                        app.amount.push(0);
+                    }
+                }).catch(function (err) {
+                    console.log(err.data);
+                });
             },
             addToCart: function (index) {
-                if (!this.choosingRestaurantIds.includes(index)) {
-                    this.choosingRestaurantIds.push(index);
+                if (!this.selectingFoods.includes(index)) {
+                    this.selectingFoods.push(index);
                 }
+                this.amount[index] += 1;
             },
             deleteFromCart: function (index) {
-                this.choosingRestaurantIds = this.choosingRestaurantIds.filter(value => value != index);
+                this.selectingFoods = this.selectingFoods.filter(value => value != index);
+                this.amount[index] = 0;
             },
-            showMenu: function (index) {
-                let restId = this.rest[index].id;
-                axios.get('/show-menu/' + restId, {}).then(function (res) {
-                    app.menu = res.data;
-                    $('#menu').modal('show');
+            submitFoods: function () {
+                let code = this.order.code;
+                let amount = [];
+                let money = [];
+                for (let i = 0; i < this.selectingFoods.length; i++) {
+                    amount.push(this.amount[this.selectingFoods[i]]);
+                    money.push(this.foods[this.selectingFoods[i]].default_price);
+                }
+                ids = this.selectingFoodIds;
+
+                axios.post('/order/' + code + '/foods/store', {
+                    amount: amount,
+                    ids: ids,
+                    money: money
+                }).then(function (res) {
+                    $('#exampleModal').modal('hide');
+                    alert("Successful");
                 }).catch(function (err) {
-                    console.log(err.data);
+                    console.log(err);
                 })
-            },
-            submitOrder: function () {
-                let params = {
-                    start: $('#start').val(),
-                    end: $('#end').val(),
-                    ids: this.choosingId,
-                }
-                // check Time
-                let start = params.start;
-                let end = params.end;
-                let mark = true;
-                if (start.substring(0, 2) > "23" || start.substring(0, 2) < "00" || end.substring(0, 2) > "23" || end.substring(0, 2) < "00") {
-                    mark = false;
-                }
-                if (start.substring(2, 3) != ":" || start.substring(2, 3) != ":" || end.substring(2, 3) != ":" || end.substring(2, 3) != ":") {
-                    mark = false;
-                }
-                if (start.substring(3, 5) > "59" || start.substring(3, 5) < "00" || end.substring(3, 5) > "59" || end.substring(3, 5) < "00") {
-                    mark = false;
-                }
-                if (!mark) {
-                    alert('Ngày tháng không đúng định dạng');
-                } else {
-                    axios.post('/restaurants/generate-link', params).then(function (res) {
-                        app.submitted = 1;
-                        app.link = "/order/link/" + res.data.order[0].code;
-                    }).catch(function (err) {
-                        console.log(err.data);
-                    })
-                }
             }
         },
         computed: {
-            amount: function () {
-                return this.choosingRestaurantIds.length;
+            selectingFoodIds: function () {
+                return this.selectingFoods.map(item => this.foods[item].id)
             },
-            choosingId: function () {
-                let arr = [];
-                for (let i = 0; i < this.choosingRestaurantIds.length; i++) {
-                    arr.push(this.rest[this.choosingRestaurantIds[i]].id)
-                }
-                return arr;
+            count: function () {
+                return this.selectingFoods.length;
+            }
+        },
+        watch: {
+            restaurants: function () {
+                let restaurantIds = this.restaurants.map(item => item.id);
+                this.getListOfFoods(restaurantIds);
             }
         },
         mounted: function () {
-            this.getListRetaurants();
+            this.getListOfRestaurant();
         }
     });
     // var cart = new Vue({
