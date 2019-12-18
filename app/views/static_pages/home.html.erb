@@ -291,7 +291,14 @@
                 });
             },
             cancelOrder: function () {
+                let code = this.code;
+                axios.post('/order/'+ code +'/cancel',{
 
+                }).then(function(res){
+                    location.reload();
+                }).catch(function (err) {
+                    console.log(err.data);
+                })
             }
         },
         computed: {

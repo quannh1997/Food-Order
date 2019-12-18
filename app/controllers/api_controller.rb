@@ -126,7 +126,14 @@ class ApiController < ApplicationController
   end
 
   def cancelOrder
-    # @user = current_user
-    @order = Order.where(["status = ? and user_id = ?",0,@user.id]).first
+    @user = current_user
+    @order = Order.where(["status = ? and user_id = ? and code = ?",0,@user.id,params[:code]]).first
+    if (@order!=nil)
+      @order.status = 2
+      @order.save
+    end
+    render :json => {
+        :status => 'ok'
+    }
   end
 end
