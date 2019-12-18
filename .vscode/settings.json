@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "food_order",
+            "dialect": "MySQL",
+            "name": "foodorder",
+            "password": "quanhen121",
+            "port": 3306,
+            "server": "localhost",
+            "username": "quannh"
+        }
+    ]
+}
