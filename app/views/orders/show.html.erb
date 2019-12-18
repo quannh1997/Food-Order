@@ -84,9 +84,16 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+              <label for="">Deadline</label>
+            </div>
+            <div class="col-md-4">
               <div class="form-group">
-                <label for="">Time start</label>
+                <input class="form-control datepicker" data-date-format="mm/dd/yyyy" placeholder="mm/dd/yyyy" v-model="order.deadline" disabled>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
                 <div class="input-group clockpicker">
                   <div class="col-xs-1">
                     <input type="text" class="form-control" v-model="order.start" id="start" disabled>
@@ -97,9 +104,16 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="">Order receipt time</label>
+            </div>
+            <div class="col-md-4">
+              <input class="datepicker form-control" data-date-format="mm/dd/yyyy" placeholder="mm/dd/yyyy" v-model="order.receipt_time" disabled>
+            </div>
+            <div class="col-md-4">
               <div class="form-group">
-                <label for="">Time end</label>
                 <div class="input-group clockpicker">
                   <div class="col-xs-1">
                     <input type="text" class="form-control" v-model="order.end" id="end" disabled>
