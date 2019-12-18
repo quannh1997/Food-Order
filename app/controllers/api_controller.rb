@@ -29,6 +29,8 @@ class ApiController < ApplicationController
       @order.start = params[:start]
       @order.end = params[:end]
       @order.date = Time.now.utc
+      @order.deadline = params[:deadline]
+      @order.receipt_time = params[:receipt_time]
       @order.save
       # Lưu danh sách nhà hàng
       params[:ids].each do |restaurant_id|

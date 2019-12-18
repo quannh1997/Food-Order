@@ -8,6 +8,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.css" rel="stylesheet">
+<link href="/vendor/datepicker/css/bootstrap-datepicker.css" rel="stylesheet">
 <div class="container">
   <div class="row">
     <div class="col-4">
@@ -69,29 +70,37 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="row">
-            <div class="col-md-6">
+          <div class="row" style="margin-left: 10px">
+            <div class="col-md-4">
+              <label for="">Deadline</label>
+            </div>
+            <div class="col-md-4">
               <div class="form-group">
-                <label for="">Time start</label>
+                <input class="datepicker" data-date-format="mm/dd/yyyy" placeholder="mm/dd/yyyy" id="deadline">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
                 <div class="input-group clockpicker">
                   <div class="col-xs-1">
                     <input type="text" class="form-control" value="09:30" id="start">
                   </div>
-                  <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-time"></span>
-                  </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+          </div>
+          <div class="row" style="margin-left: 10px">
+            <div class="col-md-4">
+              <label for="">Order receipt time</label>
+            </div>
+            <div class="col-md-4">
+              <input class="datepicker" data-date-format="mm/dd/yyyy" placeholder="mm/dd/yyyy" id="receipt">
+            </div>
+            <div class="col-md-4">
               <div class="form-group">
-                <label for="">Time end</label>
                 <div class="input-group clockpicker">
                   <div class="col-xs-1">
                     <input type="text" class="form-control" value="09:30" id="end">
-                  </div>
-                  <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-time"></span>
                   </div>
                 </div>
               </div>
@@ -119,7 +128,7 @@
             </tr>
             </tbody>
           </table>
-          <button class="btn btn-outline-success" @click="submitOrder" v-if="submitted == 0">Submit</button>
+          <button class="btn btn-outline-success" @click="submitOrder" v-if="submitted == 0 && this.choosingId.length >0">Submit</button>
           <div style="margin: 5px" v-if="submitted != 0">
             <div class="row">
               <div class="col-md-9">
@@ -133,7 +142,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger" @click="cancelOrder">Cancel this order</button>
+          <button type="button" class="btn btn-danger" @click="cancelOrder" v-if="submitted !=0">Cancel this order</button>
           <!--          <button type="button" class="btn btn-primary">Submit</button>-->
         </div>
       </div>
@@ -182,9 +191,11 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.js"></script>
+<script src="/vendor/datepicker/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $('.clockpicker').clockpicker();
+        $('.datepicker').datepicker();
     });
 </script>
 <script>
@@ -239,11 +250,14 @@
                     start: $('#start').val(),
                     end: $('#end').val(),
                     ids: this.choosingId,
+                    deadline: $('#deadline').val(),
+                    receipt_time: $('#receipt').val(),
                 }
                 // check Time
                 let start = params.start;
                 let end = params.end;
                 let mark = true;
+                if (params.deadline == "" || params.receipt_time== "") mark = false;
                 if (start.substring(0, 2) > "23" || start.substring(0, 2) < "00" || end.substring(0, 2) > "23" || end.substring(0, 2) < "00") {
                     mark = false;
                 }
@@ -254,7 +268,7 @@
                     mark = false;
                 }
                 if (!mark) {
-                    alert('Ngày tháng không đúng định dạng');
+                    alert('Please check deadline and order receipt time');
                 } else {
                     axios.post('/restaurants/generate-link', params).then(function (res) {
                         app.submitted = 1;
@@ -292,9 +306,7 @@
             },
             cancelOrder: function () {
                 let code = this.code;
-                axios.post('/order/'+ code +'/cancel',{
-
-                }).then(function(res){
+                axios.post('/order/' + code + '/cancel', {}).then(function (res) {
                     location.reload();
                 }).catch(function (err) {
                     console.log(err.data);
