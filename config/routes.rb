@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   get '/order/api/:code', to: 'api#getOrderWithCode'
   post '/order/api/foods/:code', to: 'api#getFoodsWithCode'
   post '/order/:code/foods/store' , to:'api#storeFoodsOrder'
+  get '/order/status' , to: 'api#getStatus'
+  post '/order/:id/cancel' , to: 'api#cancelOrder'
 
   get '/theme', to: 'restaurants#theme', as: 'theme'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

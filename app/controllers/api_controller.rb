@@ -107,4 +107,26 @@ class ApiController < ApplicationController
         :message => 'ok'
     }
   end
+
+  def getStatus
+    @user = current_user
+    @order = Order.where(["status = ? and user_id = ?", 0,@user.id]).first
+    if (@order == nil)
+      render :json => {
+          :status => 'not_ordered',
+          :order => nil
+      }
+    else
+      render :json => {
+          :status => 'ordered',
+          :order => @order,
+          :restaurants => @order.restaurants
+      }
+    end
+  end
+
+  def cancelOrder
+    # @user = current_user
+    @order = Order.where(["status = ? and user_id = ?",0,@user.id]).first
+  end
 end

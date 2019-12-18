@@ -27,7 +27,14 @@
         <img class="card-img-top" :src="item.image.url" alt="Card image cap" style="width: 338px; height: 225px">
         <div class="card-body">
           <h5 class="card-title">{{item.name}}</h5>
-          <p class="card-text">Rate : {{item.average_star}} <span class="fa fa-star"></span></p>
+          <p class="card-text">Rate :
+            <template v-if="item.average_star>0" v-for="index in Math.round(item.average_star)">
+              <span class="fa fa-star"></span>
+            </template>
+            <template v-if="item.average_star ==0">
+              not rated yet
+            </template>
+          </p>
           <!--<a href="/EON51" class="btn btn-primary">Choose</a>-->
           <div class="row">
             <div class="offset-md-3 col-md-2">
@@ -68,7 +75,7 @@
                 <label for="">Time start</label>
                 <div class="input-group clockpicker">
                   <div class="col-xs-1">
-                  <input type="text" class="form-control" value="09:30" id="start">
+                    <input type="text" class="form-control" value="09:30" id="start">
                   </div>
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-time"></span>
@@ -80,9 +87,9 @@
               <div class="form-group">
                 <label for="">Time end</label>
                 <div class="input-group clockpicker">
-                <div class="col-xs-1">
-                  <input type="text" class="form-control" value="09:30" id="end">
-                </div>
+                  <div class="col-xs-1">
+                    <input type="text" class="form-control" value="09:30" id="end">
+                  </div>
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-time"></span>
                   </div>
@@ -113,10 +120,20 @@
             </tbody>
           </table>
           <button class="btn btn-outline-success" @click="submitOrder" v-if="submitted == 0">Submit</button>
-          <h2 v-if="submitted != 0" style="background-color: white;"><a v-bind:href="link" style="color: red">Link of order</a></h2>
+          <div style="margin: 5px" v-if="submitted != 0">
+            <div class="row">
+              <div class="col-md-9">
+                <input class="form-control" name="order_link" style="display: inline" v-model="link" id="order_link">
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary" style="display: inline" @click="copyToClipBoard">Copy link</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" @click="cancelOrder">Cancel this order</button>
           <!--          <button type="button" class="btn btn-primary">Submit</button>-->
         </div>
       </div>
@@ -178,15 +195,20 @@
             end: '',
             rest: [],
             choosingRestaurantIds: [],
-            menu : [],
-            submitted : 0,
-            link: ''
+            menu: [],
+            submitted: 0,
+            link: '',
+            status: '',
+            pickedRestaurants: [],
+            successfulLoad: 0,
+            code: '',
         },
         methods: {
             getListRetaurants: function () {
                 axios.get('/load-list-restaurants', {}).then(function (res) {
                     let rest = res.data.list;
                     app.rest = rest;
+                    app.successfulLoad += 1;
                 }).catch(function (err) {
                     console.log(err.data);
                 })
@@ -197,7 +219,11 @@
                 }
             },
             deleteFromCart: function (index) {
-                this.choosingRestaurantIds = this.choosingRestaurantIds.filter(value => value != index);
+                if (this.submitted == 0) {
+                    this.choosingRestaurantIds = this.choosingRestaurantIds.filter(value => value != index);
+                } else {
+                    alert("Can not modify this order");
+                }
             },
             showMenu: function (index) {
                 let restId = this.rest[index].id;
@@ -232,11 +258,40 @@
                 } else {
                     axios.post('/restaurants/generate-link', params).then(function (res) {
                         app.submitted = 1;
-                        app.link = "/order/link/" + res.data.order[0].code;
+                        app.code = res.data.order.code;
+                        if (res.data.order.code) {
+                            app.link = $(location).attr('host') + "/order/link/" + res.data.order.code;
+                        } else {
+                            app.link = $(location).attr('host') + "/order/link/" + res.data.order[0].code;
+                        }
                     }).catch(function (err) {
                         console.log(err.data);
                     })
                 }
+            },
+            copyToClipBoard: function () {
+                var copyText = document.getElementById("order_link");
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+            },
+            getOrderStatus: function () {
+                axios.get('/order/status', {}).then(function (res) {
+                    app.status = res.data.status;
+                    if (app.status == 'ordered') {
+                        app.submitted = 1;
+                        app.link = $(location).attr('host') + "/order/link/" + res.data.order.code;
+                        app.pickedRestaurants = res.data.restaurants;
+                        app.code = res.data.order.code;
+                    }
+                    app.successfulLoad += 1;
+
+                }).catch(function (err) {
+                    console.log(err.data);
+                });
+            },
+            cancelOrder: function () {
+
             }
         },
         computed: {
@@ -251,7 +306,23 @@
                 return arr;
             }
         },
+        watch: {
+            successfulLoad: function () { // lay ra tat ca nhung nha hang da chon
+                if (this.successfulLoad == 2) {
+                    for (let i1 in this.pickedRestaurants) {
+                        for (let i2 in this.rest) {
+                            if (this.pickedRestaurants[i1].id == this.rest[i2].id) {
+                                this.choosingRestaurantIds.push(parseInt(i2));
+                                break;
+                            }
+                        }
+                        // console.log(this.pickedRestaurants[i1]);
+                    }
+                }
+            }
+        },
         mounted: function () {
+            this.getOrderStatus();
             this.getListRetaurants();
         }
     });
